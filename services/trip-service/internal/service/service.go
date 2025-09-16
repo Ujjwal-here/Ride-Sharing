@@ -1,6 +1,11 @@
 package service
 
-import "ride-sharing/services/trip-service/internal/domain"
+import (
+	"context"
+	"ride-sharing/services/trip-service/internal/domain"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type service struct {
 	repo domain.TripRepository
@@ -8,4 +13,14 @@ type service struct {
 
 func NewService(repo domain.TripRepository) *service {
 	return &service{repo: repo}
+}
+
+func (s *service) CreateTrip(ctx context.Context, fare *domain.RideFareModel) (*domain.TripModel, error) {
+	trip := &domain.TripModel{
+		ID:       primitive.NewObjectID(),
+		UserID:   fare.UserID,
+		Status:   "pending",
+		RideFare: fare,
+	}
+	return s.repo.CreateTrip(ctx, trip)
 }
