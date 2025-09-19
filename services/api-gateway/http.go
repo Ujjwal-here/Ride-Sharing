@@ -6,7 +6,7 @@ import (
 	"ride-sharing/shared/contracts"
 )
 
-func handleTripPreView(w http.ResponseWriter, r *http.Request) {
+func handleTripPreview(w http.ResponseWriter, r *http.Request) {
 	var reqBody previewTripRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
