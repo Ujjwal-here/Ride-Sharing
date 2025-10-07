@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"ride-sharing/services/trip-service/internal/domain"
+	pkgtypes "ride-sharing/services/trip-service/pkg/types"
 	"ride-sharing/shared/types"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -30,7 +31,7 @@ func (s *service) CreateTrip(ctx context.Context, fare *domain.RideFareModel) (*
 	return s.repo.CreateTrip(ctx, trip)
 }
 
-func (s *service) GetRoute(ctx context.Context, pickup, destination *types.Coordinate) (*types.OSRMApiResponse, error) {
+func (s *service) GetRoute(ctx context.Context, pickup, destination *types.Coordinate) (*pkgtypes.OSRMApiResponse, error) {
 	url := fmt.Sprintf("'http://router.project-osrm.org/route/v1/driving/%f,%f;%f,%f?overview=full&geometries=geojson'", pickup.Longitude, pickup.Latitude, destination.Longitude, destination.Latitude)
 	res, err := http.Get(url)
 
@@ -46,7 +47,7 @@ func (s *service) GetRoute(ctx context.Context, pickup, destination *types.Coord
 
 	defer res.Body.Close()
 
-	var routeResp types.OSRMApiResponse
+	var routeResp pkgtypes.OSRMApiResponse
 	if err := json.Unmarshal(body, &routeResp); err != nil {
 		return nil, fmt.Errorf("Failed to parse response: %v", err)
 	}
