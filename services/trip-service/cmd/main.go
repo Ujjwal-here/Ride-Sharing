@@ -1,32 +1,42 @@
 package cmd
 
 import (
-	"context"
-	"fmt"
 	"log"
-	"ride-sharing/services/trip-service/internal/domain"
+	"net"
+	grpcserver "ride-sharing/services/trip-service/internal/infrastructure/grpc_server"
 	"ride-sharing/services/trip-service/internal/infrastructure/repository"
 	"ride-sharing/services/trip-service/internal/service"
-	"time"
+	"ride-sharing/shared/env"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"google.golang.org/grpc"
+)
+
+var (
+	grpcAddr = env.GetString("GRPC_ADDR", ":9093")
 )
 
 func main() {
-	ctx := context.Background()
-
 	inmemRepo := repository.NewInmemRepository()
 	svc := service.NewService(inmemRepo)
-	fare := &domain.RideFareModel{
-		ID:                primitive.NewObjectID(),
-		UserID:            "123",
-		PackageSlug:       "123",
-		TotalPriceInCents: 100,
-		ExpiresAt:         time.Now().Add(time.Hour * 24),
-	}
-	trip, err := svc.CreateTrip(ctx, fare)
+
+	lis, err := net.Listen("tcp", grpcAddr)
+
 	if err != nil {
-		log.Fatalf("Failed to create trip: %v", err)
+		log.Fatalf("Failed to listen: %v", err)
 	}
-	fmt.Println(trip)
+
+	grpcServer := grpc.NewServer()
+
+	grpcHandler := grpcserver.NewGrpcHandler(grpcServer, svc)
+
+	log.Println(grpcHandler)
+
+	log.Printf("Starting gRPC Trip Service on port %s", lis.Addr().String())
+
+	go func() {
+		if err := grpcServer.Serve(lis); err != nil {
+			log.Fatalf("Failed to serve: %v", err)
+		}
+	}()
+
 }
