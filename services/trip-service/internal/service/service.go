@@ -54,3 +54,76 @@ func (s *service) GetRoute(ctx context.Context, pickup, destination *types.Coord
 
 	return &routeResp, nil
 }
+
+func (s *service) EstimatePackagePriceWithRoute(route *pkgtypes.OSRMApiResponse) []*domain.RideFareModel {
+	baseFares := getBaseFares()
+	estimatedFares := make([]*domain.RideFareModel, len(baseFares))
+
+	for i, f := range baseFares {
+		estimatedFares[i] = estimateFareRoutes(f, route)
+	}
+
+	return estimatedFares
+}
+
+func (s *service) GenerateTripFares(context context.Context, rideFares []*domain.RideFareModel, userid string) ([]*domain.RideFareModel, error) {
+	fares := make([]*domain.RideFareModel, len(rideFares))
+
+	for i, f := range rideFares {
+		id := primitive.NewObjectID()
+
+		fare := &domain.RideFareModel{
+			UserID:            userid,
+			ID:                id,
+			TotalPriceInCents: f.TotalPriceInCents,
+			PackageSlug:       f.PackageSlug,
+		}
+
+		if err := s.repo.SaveRideFare(context, fare); err != nil {
+			return nil, fmt.Errorf("failed to save trip fare %w", err)
+		}
+
+		fares[i] = fare
+	}
+
+	return fares, nil
+}
+
+func estimateFareRoutes(f *domain.RideFareModel, route *pkgtypes.OSRMApiResponse) *domain.RideFareModel {
+	pricingCfg := pkgtypes.DefaultPricingConfig()
+	carPackagePrice := f.TotalPriceInCents
+
+	distanceKm := route.Route[0].Distance
+	durationInMinutes := route.Route[0].Duration
+
+	distanceFare := distanceKm * pricingCfg.PricePerUnitOfDistance
+	timeFare := durationInMinutes * pricingCfg.PricingPerMinute
+
+	totalPrice := carPackagePrice + distanceFare + timeFare
+
+	return &domain.RideFareModel{
+		TotalPriceInCents: totalPrice,
+		PackageSlug:       f.PackageSlug,
+	}
+}
+
+func getBaseFares() []*domain.RideFareModel {
+	return []*domain.RideFareModel{
+		{
+			PackageSlug:       "suv",
+			TotalPriceInCents: 200,
+		},
+		{
+			PackageSlug:       "sedan",
+			TotalPriceInCents: 350,
+		},
+		{
+			PackageSlug:       "van",
+			TotalPriceInCents: 400,
+		},
+		{
+			PackageSlug:       "luxury",
+			TotalPriceInCents: 1000,
+		},
+	}
+}
