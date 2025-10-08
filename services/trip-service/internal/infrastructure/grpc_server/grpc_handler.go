@@ -54,6 +54,6 @@ func (h *grpcHandler) PreviewTrip(ctx context.Context, req *pb.PreviewTripReques
 
 	return &pb.PreviewTripResponse{
 		Route:     route.ToRoute(),
-		RideFares: []*pb.RideFare{},
+		RideFares: domain.ToRideFaresProto(fares),
 	}, nil
 }
