@@ -6,9 +6,9 @@ import (
 )
 
 type previewTripRequest struct {
-	UserID      string           `json: "userId"`
-	Pickup      types.Coordinate `json: "pickup"`
-	Destination types.Coordinate `json: "destination"`
+	UserID      string           `json:"userId"`
+	Pickup      types.Coordinate `json:"pickup"`
+	Destination types.Coordinate `json:"destination"`
 }
 
 func (p *previewTripRequest) ToProto() *pb.PreviewTripRequest {
