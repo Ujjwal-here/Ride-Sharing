@@ -1,4 +1,4 @@
-package grpcclients
+package grpc_clients
 
 import (
 	"os"
@@ -8,29 +8,34 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type TripServiceClient struct {
+type tripServiceClient struct {
 	Client pb.TripServiceClient
-	Conn   *grpc.ClientConn
+	conn   *grpc.ClientConn
 }
 
-func NewTripServiceClient() (*TripServiceClient, error) {
-	tripServiceUrl := os.Getenv("TRIP_SERVICE_URL")
-
-	if tripServiceUrl == "" {
-		tripServiceUrl = "trip-service:9093"
+func NewTripServiceClient() (*tripServiceClient, error) {
+	tripServiceURL := os.Getenv("TRIP_SERVICE_URL")
+	if tripServiceURL == "" {
+		tripServiceURL = "trip-service:9093"
 	}
 
-	conn, err := grpc.NewClient(tripServiceUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(tripServiceURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}
 
-	return &TripServiceClient{
-		Client: pb.NewTripServiceClient(conn),
-		Conn:   conn,
+	client := pb.NewTripServiceClient(conn)
+
+	return &tripServiceClient{
+		Client: client,
+		conn:   conn,
 	}, nil
 }
 
-func (c *TripServiceClient) Close() error {
-	return c.Conn.Close()
+func (c *tripServiceClient) Close() {
+	if c.conn != nil {
+		if err := c.conn.Close(); err != nil {
+			return
+		}
+	}
 }

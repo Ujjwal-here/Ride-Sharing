@@ -15,51 +15,18 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func handleDriversWebSocket(w http.ResponseWriter, r *http.Request) {
+func handleRidersWebSocket(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
-
 	if err != nil {
-		log.Printf("Websocket upgrade failed: %v", err)
+		log.Printf("WebSocket upgrade failed: %v", err)
 		return
 	}
 
 	defer conn.Close()
 
-	userId := r.URL.Query().Get("userId")
-
-	if userId == "" {
+	userID := r.URL.Query().Get("userID")
+	if userID == "" {
 		log.Println("No user ID provided")
-		return
-	}
-
-	packageSlug := r.URL.Query().Get("packageSlug")
-
-	if packageSlug == "" {
-		log.Println("No packageSlug provided")
-		return
-	}
-
-	type Driver struct {
-		Id             string `json:"id"`
-		Name           string `json:"name"`
-		ProfilePicture string `json:"profile_picture"`
-		CarPlate       string `json:"car_plate"`
-		PackageSlug    string `json:"package_slug"`
-	}
-
-	msg := contracts.WSMessage{
-		Type: "driver.cmd.register",
-		Data: Driver{
-			Id:             userId,
-			Name:           "Ujjwal",
-			ProfilePicture: util.GetRandomAvatar(1),
-			CarPlate:       "ABC123",
-			PackageSlug:    packageSlug,
-		},
-	}
-
-	if err := conn.WriteJSON(msg); err != nil {
-		log.Printf("Error sending message: %v", err)
 		return
 	}
 
@@ -74,19 +41,48 @@ func handleDriversWebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleRidersWebSocket(w http.ResponseWriter, r *http.Request) {
+func handleDriversWebSocket(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
-
 	if err != nil {
-		log.Printf("Websocket upgrade failed: %v", err)
+		log.Printf("WebSocket upgrade failed: %v", err)
+		return
 	}
 
 	defer conn.Close()
 
-	userId := r.URL.Query().Get("userId")
+	userID := r.URL.Query().Get("userID")
+	if userID == "" {
+		log.Println("No user ID provided")
+		return
+	}
 
-	if userId == "" {
-		log.Printf("No user ID provided")
+	packageSlug := r.URL.Query().Get("packageSlug")
+	if packageSlug == "" {
+		log.Println("No package slug provided")
+		return
+	}
+
+	type Driver struct {
+		Id             string `json:"id"`
+		Name           string `json:"name"`
+		ProfilePicture string `json:"profilePicture"`
+		CarPlate       string `json:"carPlate"`
+		PackageSlug    string `json:"packageSlug"`
+	}
+
+	msg := contracts.WSMessage{
+		Type: "driver.cmd.register",
+		Data: Driver{
+			Id:             userID,
+			Name:           "Tiago",
+			ProfilePicture: util.GetRandomAvatar(1),
+			CarPlate:       "ABC123",
+			PackageSlug:    packageSlug,
+		},
+	}
+
+	if err := conn.WriteJSON(msg); err != nil {
+		log.Printf("Error sending message: %v", err)
 		return
 	}
 

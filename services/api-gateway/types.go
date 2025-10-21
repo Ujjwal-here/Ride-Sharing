@@ -6,19 +6,19 @@ import (
 )
 
 type previewTripRequest struct {
-	UserID      string           `json:"userId"`
+	UserID      string           `json:"userID"`
 	Pickup      types.Coordinate `json:"pickup"`
 	Destination types.Coordinate `json:"destination"`
 }
 
-func (p *previewTripRequest) ToProto() *pb.PreviewTripRequest {
+func (p *previewTripRequest) toProto() *pb.PreviewTripRequest {
 	return &pb.PreviewTripRequest{
 		UserID: p.UserID,
-		Pickup: &pb.Coordinate{
+		StartLocation: &pb.Coordinate{
 			Latitude:  p.Pickup.Latitude,
 			Longitude: p.Pickup.Longitude,
 		},
-		Destination: &pb.Coordinate{
+		EndLocation: &pb.Coordinate{
 			Latitude:  p.Destination.Latitude,
 			Longitude: p.Destination.Longitude,
 		},

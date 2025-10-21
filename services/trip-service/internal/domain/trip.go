@@ -2,9 +2,10 @@ package domain
 
 import (
 	"context"
-	pkgtypes "ride-sharing/services/trip-service/pkg/types"
-	pb "ride-sharing/shared/proto/trip"
 	"ride-sharing/shared/types"
+
+	tripTypes "ride-sharing/services/trip-service/pkg/types"
+	pb "ride-sharing/shared/proto/trip"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -19,14 +20,14 @@ type TripModel struct {
 
 type TripRepository interface {
 	CreateTrip(context context.Context, trip *TripModel) (*TripModel, error)
-	SaveRideFare(context.Context, *RideFareModel) error
+	SaveRideFare(context context.Context, f *RideFareModel) error
 	GetRideFareByID(context context.Context, id string) (*RideFareModel, error)
 }
 
 type TripService interface {
 	CreateTrip(context context.Context, fare *RideFareModel) (*TripModel, error)
-	GetRoute(context context.Context, pickup, destination *types.Coordinate) (*pkgtypes.OSRMApiResponse, error)
-	EstimatePackagePriceWithRoute(*pkgtypes.OSRMApiResponse) []*RideFareModel
-	GenerateTripFares(context.Context, []*RideFareModel, string, *pkgtypes.OSRMApiResponse) ([]*RideFareModel, error)
+	GetRoute(context context.Context, pickup, destination *types.Coordinate) (*tripTypes.OsrmApiResponse, error)
+	EstimatePackagesPriceWithRoute(route *tripTypes.OsrmApiResponse) []*RideFareModel
+	GenerateTripFares(context context.Context, fares []*RideFareModel, userID string) ([]*RideFareModel, error)
 	GetAndValidateFare(context context.Context, fareID, userID string) (*RideFareModel, error)
 }

@@ -24,8 +24,8 @@ const (
 type PreviewTripRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserID        string                 `protobuf:"bytes,1,opt,name=userID,proto3" json:"userID,omitempty"`
-	Pickup        *Coordinate            `protobuf:"bytes,2,opt,name=pickup,proto3" json:"pickup,omitempty"`
-	Destination   *Coordinate            `protobuf:"bytes,3,opt,name=destination,proto3" json:"destination,omitempty"`
+	StartLocation *Coordinate            `protobuf:"bytes,2,opt,name=startLocation,proto3" json:"startLocation,omitempty"`
+	EndLocation   *Coordinate            `protobuf:"bytes,3,opt,name=endLocation,proto3" json:"endLocation,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -67,16 +67,16 @@ func (x *PreviewTripRequest) GetUserID() string {
 	return ""
 }
 
-func (x *PreviewTripRequest) GetPickup() *Coordinate {
+func (x *PreviewTripRequest) GetStartLocation() *Coordinate {
 	if x != nil {
-		return x.Pickup
+		return x.StartLocation
 	}
 	return nil
 }
 
-func (x *PreviewTripRequest) GetDestination() *Coordinate {
+func (x *PreviewTripRequest) GetEndLocation() *Coordinate {
 	if x != nil {
-		return x.Destination
+		return x.EndLocation
 	}
 	return nil
 }
@@ -193,18 +193,62 @@ func (x *Coordinate) GetLongitude() float64 {
 	return 0
 }
 
+type Geometry struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Coordinates   []*Coordinate          `protobuf:"bytes,1,rep,name=coordinates,proto3" json:"coordinates,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Geometry) Reset() {
+	*x = Geometry{}
+	mi := &file_trip_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Geometry) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Geometry) ProtoMessage() {}
+
+func (x *Geometry) ProtoReflect() protoreflect.Message {
+	mi := &file_trip_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Geometry.ProtoReflect.Descriptor instead.
+func (*Geometry) Descriptor() ([]byte, []int) {
+	return file_trip_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Geometry) GetCoordinates() []*Coordinate {
+	if x != nil {
+		return x.Coordinates
+	}
+	return nil
+}
+
 type Route struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Distance      float64                `protobuf:"fixed64,1,opt,name=distance,proto3" json:"distance,omitempty"`
-	Duration      float64                `protobuf:"fixed64,2,opt,name=duration,proto3" json:"duration,omitempty"`
-	Geometry      []*Geometry            `protobuf:"bytes,3,rep,name=geometry,proto3" json:"geometry,omitempty"`
+	Geometry      []*Geometry            `protobuf:"bytes,1,rep,name=geometry,proto3" json:"geometry,omitempty"`
+	Distance      float64                `protobuf:"fixed64,2,opt,name=distance,proto3" json:"distance,omitempty"`
+	Duration      float64                `protobuf:"fixed64,3,opt,name=duration,proto3" json:"duration,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Route) Reset() {
 	*x = Route{}
-	mi := &file_trip_proto_msgTypes[3]
+	mi := &file_trip_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -216,7 +260,7 @@ func (x *Route) String() string {
 func (*Route) ProtoMessage() {}
 
 func (x *Route) ProtoReflect() protoreflect.Message {
-	mi := &file_trip_proto_msgTypes[3]
+	mi := &file_trip_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -229,7 +273,14 @@ func (x *Route) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Route.ProtoReflect.Descriptor instead.
 func (*Route) Descriptor() ([]byte, []int) {
-	return file_trip_proto_rawDescGZIP(), []int{3}
+	return file_trip_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *Route) GetGeometry() []*Geometry {
+	if x != nil {
+		return x.Geometry
+	}
+	return nil
 }
 
 func (x *Route) GetDistance() float64 {
@@ -244,57 +295,6 @@ func (x *Route) GetDuration() float64 {
 		return x.Duration
 	}
 	return 0
-}
-
-func (x *Route) GetGeometry() []*Geometry {
-	if x != nil {
-		return x.Geometry
-	}
-	return nil
-}
-
-type Geometry struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Coordinates   []*Coordinate          `protobuf:"bytes,1,rep,name=coordinates,proto3" json:"coordinates,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Geometry) Reset() {
-	*x = Geometry{}
-	mi := &file_trip_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Geometry) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Geometry) ProtoMessage() {}
-
-func (x *Geometry) ProtoReflect() protoreflect.Message {
-	mi := &file_trip_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Geometry.ProtoReflect.Descriptor instead.
-func (*Geometry) Descriptor() ([]byte, []int) {
-	return file_trip_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *Geometry) GetCoordinates() []*Coordinate {
-	if x != nil {
-		return x.Coordinates
-	}
-	return nil
 }
 
 type RideFare struct {
@@ -553,6 +553,7 @@ func (x *Trip) GetDriver() *TripDriver {
 	return nil
 }
 
+// Static driver object that is used to store the driver information
 type TripDriver struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -626,11 +627,11 @@ var File_trip_proto protoreflect.FileDescriptor
 const file_trip_proto_rawDesc = "" +
 	"\n" +
 	"\n" +
-	"trip.proto\x12\x04trip\"\x8a\x01\n" +
+	"trip.proto\x12\x04trip\"\x98\x01\n" +
 	"\x12PreviewTripRequest\x12\x16\n" +
-	"\x06userID\x18\x01 \x01(\tR\x06userID\x12(\n" +
-	"\x06pickup\x18\x02 \x01(\v2\x10.trip.CoordinateR\x06pickup\x122\n" +
-	"\vdestination\x18\x03 \x01(\v2\x10.trip.CoordinateR\vdestination\"~\n" +
+	"\x06userID\x18\x01 \x01(\tR\x06userID\x126\n" +
+	"\rstartLocation\x18\x02 \x01(\v2\x10.trip.CoordinateR\rstartLocation\x122\n" +
+	"\vendLocation\x18\x03 \x01(\v2\x10.trip.CoordinateR\vendLocation\"~\n" +
 	"\x13PreviewTripResponse\x12\x16\n" +
 	"\x06tripID\x18\x01 \x01(\tR\x06tripID\x12!\n" +
 	"\x05route\x18\x02 \x01(\v2\v.trip.RouteR\x05route\x12,\n" +
@@ -638,13 +639,13 @@ const file_trip_proto_rawDesc = "" +
 	"\n" +
 	"Coordinate\x12\x1a\n" +
 	"\blatitude\x18\x01 \x01(\x01R\blatitude\x12\x1c\n" +
-	"\tlongitude\x18\x02 \x01(\x01R\tlongitude\"k\n" +
-	"\x05Route\x12\x1a\n" +
-	"\bdistance\x18\x01 \x01(\x01R\bdistance\x12\x1a\n" +
-	"\bduration\x18\x02 \x01(\x01R\bduration\x12*\n" +
-	"\bgeometry\x18\x03 \x03(\v2\x0e.trip.GeometryR\bgeometry\">\n" +
+	"\tlongitude\x18\x02 \x01(\x01R\tlongitude\">\n" +
 	"\bGeometry\x122\n" +
-	"\vcoordinates\x18\x01 \x03(\v2\x10.trip.CoordinateR\vcoordinates\"\x82\x01\n" +
+	"\vcoordinates\x18\x01 \x03(\v2\x10.trip.CoordinateR\vcoordinates\"k\n" +
+	"\x05Route\x12*\n" +
+	"\bgeometry\x18\x01 \x03(\v2\x0e.trip.GeometryR\bgeometry\x12\x1a\n" +
+	"\bdistance\x18\x02 \x01(\x01R\bdistance\x12\x1a\n" +
+	"\bduration\x18\x03 \x01(\x01R\bduration\"\x82\x01\n" +
 	"\bRideFare\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06userID\x18\x02 \x01(\tR\x06userID\x12 \n" +
@@ -675,7 +676,7 @@ const file_trip_proto_rawDesc = "" +
 	"\vTripService\x12B\n" +
 	"\vPreviewTrip\x12\x18.trip.PreviewTripRequest\x1a\x19.trip.PreviewTripResponse\x12?\n" +
 	"\n" +
-	"CreateTrip\x12\x17.trip.CreateTripRequest\x1a\x18.trip.CreateTripResponseB\x13Z\x11shared/proto/tripb\x06proto3"
+	"CreateTrip\x12\x17.trip.CreateTripRequest\x1a\x18.trip.CreateTripResponseB\x18Z\x16shared/proto/trip;tripb\x06proto3"
 
 var (
 	file_trip_proto_rawDescOnce sync.Once
@@ -694,8 +695,8 @@ var file_trip_proto_goTypes = []any{
 	(*PreviewTripRequest)(nil),  // 0: trip.PreviewTripRequest
 	(*PreviewTripResponse)(nil), // 1: trip.PreviewTripResponse
 	(*Coordinate)(nil),          // 2: trip.Coordinate
-	(*Route)(nil),               // 3: trip.Route
-	(*Geometry)(nil),            // 4: trip.Geometry
+	(*Geometry)(nil),            // 3: trip.Geometry
+	(*Route)(nil),               // 4: trip.Route
 	(*RideFare)(nil),            // 5: trip.RideFare
 	(*CreateTripRequest)(nil),   // 6: trip.CreateTripRequest
 	(*CreateTripResponse)(nil),  // 7: trip.CreateTripResponse
@@ -703,15 +704,15 @@ var file_trip_proto_goTypes = []any{
 	(*TripDriver)(nil),          // 9: trip.TripDriver
 }
 var file_trip_proto_depIdxs = []int32{
-	2,  // 0: trip.PreviewTripRequest.pickup:type_name -> trip.Coordinate
-	2,  // 1: trip.PreviewTripRequest.destination:type_name -> trip.Coordinate
-	3,  // 2: trip.PreviewTripResponse.route:type_name -> trip.Route
+	2,  // 0: trip.PreviewTripRequest.startLocation:type_name -> trip.Coordinate
+	2,  // 1: trip.PreviewTripRequest.endLocation:type_name -> trip.Coordinate
+	4,  // 2: trip.PreviewTripResponse.route:type_name -> trip.Route
 	5,  // 3: trip.PreviewTripResponse.rideFares:type_name -> trip.RideFare
-	4,  // 4: trip.Route.geometry:type_name -> trip.Geometry
-	2,  // 5: trip.Geometry.coordinates:type_name -> trip.Coordinate
+	2,  // 4: trip.Geometry.coordinates:type_name -> trip.Coordinate
+	3,  // 5: trip.Route.geometry:type_name -> trip.Geometry
 	8,  // 6: trip.CreateTripResponse.trip:type_name -> trip.Trip
 	5,  // 7: trip.Trip.selectedFare:type_name -> trip.RideFare
-	3,  // 8: trip.Trip.route:type_name -> trip.Route
+	4,  // 8: trip.Trip.route:type_name -> trip.Route
 	9,  // 9: trip.Trip.driver:type_name -> trip.TripDriver
 	0,  // 10: trip.TripService.PreviewTrip:input_type -> trip.PreviewTripRequest
 	6,  // 11: trip.TripService.CreateTrip:input_type -> trip.CreateTripRequest
