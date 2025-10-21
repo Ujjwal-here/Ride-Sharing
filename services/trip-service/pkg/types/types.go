@@ -1,9 +1,9 @@
-package pkgtypes
+package types
 
 import pb "ride-sharing/shared/proto/trip"
 
-type OSRMApiResponse struct {
-	Route []struct {
+type OsrmApiResponse struct {
+	Routes []struct {
 		Distance float64 `json:"distance"`
 		Duration float64 `json:"duration"`
 		Geometry struct {
@@ -12,8 +12,8 @@ type OSRMApiResponse struct {
 	} `json:"routes"`
 }
 
-func (o *OSRMApiResponse) ToRoute() *pb.Route {
-	route := o.Route[0]
+func (o *OsrmApiResponse) ToProto() *pb.Route {
+	route := o.Routes[0]
 	geometry := route.Geometry.Coordinates
 	coordinates := make([]*pb.Coordinate, len(geometry))
 	for i, coord := range geometry {
@@ -22,14 +22,15 @@ func (o *OSRMApiResponse) ToRoute() *pb.Route {
 			Longitude: coord[1],
 		}
 	}
+
 	return &pb.Route{
-		Distance: route.Distance,
-		Duration: route.Duration,
 		Geometry: []*pb.Geometry{
 			{
 				Coordinates: coordinates,
 			},
 		},
+		Distance: route.Distance,
+		Duration: route.Duration,
 	}
 }
 
